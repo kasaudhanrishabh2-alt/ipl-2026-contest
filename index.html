@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPL 2026 · Fantasy Scorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080d18;--s1:#0f1724;--s2:#162032;--s3:#1c2840;
+  --b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);
+  --tx:#eef2ff;--mu:#64748b;
+  --or:#f97316;--go:#fbbf24;--gr:#10b981;--re:#ef4444;--bl:#3b82f6;--pu:#a855f7;
+  --fh:'Rajdhani',sans-serif;--fb:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);min-height:100vh;font-size:14px}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 40% at 50% -5%,rgba(249,115,22,.1) 0%,transparent 55%),
+             radial-gradient(ellipse 50% 35% at 85% 95%,rgba(59,130,246,.07) 0%,transparent 55%)}
+.app{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:20px 14px 80px}
+
+/* CONFIG */
+.cfg{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.25);border-radius:12px;padding:14px 18px;margin-bottom:18px}
+.cfg h3{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--go);margin-bottom:10px}
+.cfg-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.cfg-f{flex:1;min-width:180px}
+.cfg-f label{font-size:10px;color:var(--mu);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.cfg-f input{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:7px 10px;color:var(--tx);font-size:12px;font-family:var(--fb)}
+.cfg-f input:focus{outline:none;border-color:var(--go)}
+.cfg-note{font-size:11px;color:var(--mu);margin-top:8px;line-height:1.7}
+.cfg-note code{background:var(--s1);padding:1px 5px;border-radius:3px;font-size:10px}
+
+/* HEADER */
+.hdr{text-align:center;margin-bottom:28px}
+.hdr-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.28);border-radius:100px;padding:3px 12px;font-size:11px;color:var(--or);font-family:var(--fh);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--or);animation:pulse 1.5s ease-in-out infinite;display:inline-block}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hdr h1{font-family:var(--fh);font-size:clamp(26px,5vw,46px);font-weight:700;letter-spacing:1px;line-height:1.1}
+.hdr h1 em{color:var(--or);font-style:normal}
+.hdr p{color:var(--mu);font-size:13px;margin-top:5px}
+
+/* NAV */
+.nav{display:flex;gap:3px;background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:4px;margin-bottom:20px;overflow-x:auto}
+.nav-btn{flex:1;min-width:58px;padding:9px 6px;border:none;background:transparent;color:var(--mu);font-family:var(--fh);font-size:13px;font-weight:600;letter-spacing:.4px;cursor:pointer;border-radius:8px;transition:all .18s;text-transform:uppercase;white-space:nowrap}
+.nav-btn.active{background:var(--or);color:#fff}
+.nav-btn:hover:not(.active){color:var(--tx);background:var(--s2)}
+
+/* SECTIONS */
+.sec{display:none}.sec.active{display:block}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:18px;margin-bottom:14px}
+.card-title{font-family:var(--fh);font-size:14px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:14px;color:var(--tx)}
+
+/* MATCH */
+.match-hero{background:var(--s1);border:1px solid var(--b2);border-radius:14px;padding:18px;margin-bottom:16px}
+.match-teams{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.team-blk{text-align:center;flex:1}
+.team-name{font-family:var(--fh);font-size:clamp(16px,2.5vw,24px);font-weight:700;line-height:1.1}
+.team-short{font-size:11px;color:var(--mu);margin-top:2px}
+.vs{background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);color:var(--or);font-family:var(--fh);font-weight:700;font-size:16px;padding:7px 12px;border-radius:7px;flex-shrink:0}
+.match-meta{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.chip{background:var(--s2);border:1px solid var(--b1);border-radius:5px;padding:3px 8px;font-size:11px;color:var(--mu)}
+.chip span{color:var(--tx)}
+.squads-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+@media(max-width:520px){.squads-grid{grid-template-columns:1fr}}
+.squad-col{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:12px}
+.squad-lbl{font-family:var(--fh);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--or);margin-bottom:8px}
+.pp{display:flex;align-items:center;gap:7px;padding:5px 6px;border-bottom:1px solid var(--b1);font-size:12px}
+.pp:last-child{border-bottom:none}
+.pp-num{color:var(--mu);font-size:10px;width:14px;flex-shrink:0}
+.pp-role{font-size:9px;background:var(--s1);border:1px solid var(--b1);border-radius:3px;padding:1px 4px;color:var(--mu);margin-left:auto;flex-shrink:0}
+
+/* SIT-OUT BANNER */
+.sitout-bar{background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.22);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+.sitout-bar h4{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--pu);margin-bottom:8px}
+.sitout-btns{display:flex;gap:8px;flex-wrap:wrap}
+.sitout-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--b2);background:transparent;color:var(--mu);font-family:var(--fh);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.sitout-btn.sitting{background:rgba(168,85,247,.18);border-color:rgba(168,85,247,.5);color:var(--pu)}
+.sitout-btn:hover:not(.sitting){color:var(--tx);border-color:var(--b2)}
+.sitout-note{font-size:11px;color:var(--mu);margin-top:7px}
+
+/* PARTICIPANT CARDS */
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.p-grid{grid-template-columns:1fr}}
+.p-card{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:13px;position:relative}
+.p-card.sitout-card{opacity:.45;pointer-events:none}
+.sitout-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(8,13,24,.55);z-index:2}
+.sitout-overlay span{font-family:var(--fh);font-size:16px;font-weight:700;color:var(--pu);background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.4);padding:7px 18px;border-radius:8px}
+.p-hdr{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.p-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;font-size:15px;flex-shrink:0;color:#fff}
+.av1{background:linear-gradient(135deg,#f97316,#ea580c)}
+.av2{background:linear-gradient(135deg,#3b82f6,#2563eb)}
+.av3{background:linear-gradient(135deg,#10b981,#059669)}
+.av4{background:linear-gradient(135deg,#a855f7,#7c3aed)}
+.p-name{font-family:var(--fh);font-size:16px;font-weight:700}
+.role-tags{display:flex;gap:5px;margin-bottom:7px;flex-wrap:wrap}
+.rtag{font-size:10px;padding:2px 7px;border-radius:4px;font-family:var(--fh);font-weight:600}
+.rtag-c{background:rgba(251,191,36,.15);color:var(--go);border:1px solid rgba(251,191,36,.3)}
+.rtag-vc{background:rgba(168,85,247,.15);color:var(--pu);border:1px solid rgba(168,85,247,.3)}
+.player-list{display:flex;flex-direction:column;gap:3px;max-height:260px;overflow-y:auto}
+.player-list::-webkit-scrollbar{width:3px}
+.player-list::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+.click-hint{font-size:10px;color:var(--mu);margin-bottom:6px;line-height:1.5}
+.click-hint span{color:var(--go)}
+.p-item{display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:5px;cursor:pointer;font-size:12px;border:1px solid transparent;transition:background .12s}
+.p-item:hover{background:var(--s1)}
+.p-item.sel{background:rgba(249,115,22,.09);border-color:rgba(249,115,22,.28)}
+.p-item.cap{background:rgba(251,191,36,.09);border-color:rgba(251,191,36,.35)}
+.p-item.vc{background:rgba(168,85,247,.09);border-color:rgba(168,85,247,.3)}
+.p-item.taken{opacity:.3;cursor:not-allowed}
+.p-chk{width:15px;height:15px;border-radius:3px;border:1px solid var(--b2);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.p-item.sel .p-chk,.p-item.cap .p-chk,.p-item.vc .p-chk{background:var(--or);border-color:var(--or)}
+.p-item.cap .p-chk{background:var(--go);border-color:var(--go)}
+.p-item.vc .p-chk{background:var(--pu);border-color:var(--pu)}
+.p-badge{margin-left:auto;font-size:9px;font-family:var(--fh);font-weight:700;padding:1px 5px;border-radius:3px}
+.p-badge-c{background:rgba(251,191,36,.2);color:var(--go)}
+.p-badge-vc{background:rgba(168,85,247,.2);color:var(--pu)}
+.p-badge-tk{background:rgba(239,68,68,.1);color:var(--re)}
+.tdiv{font-size:9px;font-family:var(--fh);text-transform:uppercase;letter-spacing:.8px;color:var(--mu);padding:5px 0 3px;border-top:1px solid var(--b1);margin-top:3px}
+
+/* LEADERBOARD */
+.lb-row{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--b1);border-radius:11px;padding:12px 14px;margin-bottom:8px}
+.lb-row.r1{border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.04)}
+.lb-row.r2{border-color:rgba(148,163,184,.25)}
+.lb-row.r3{border-color:rgba(180,83,9,.28)}
+.rnk{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;font-size:14px;flex-shrink:0}
+.rnk.r1{background:var(--go);color:#000}
+.rnk.r2{background:#94a3b8;color:#000}
+.rnk.r3{background:#b45309;color:#fff}
+.rnk.rn{background:var(--s1);color:var(--mu);border:1px solid var(--b1)}
+.rnk.rs{background:var(--s1);color:var(--pu);border:1px solid rgba(168,85,247,.3)}
+.lb-name{font-family:var(--fh);font-size:17px;font-weight:700;flex:1}
+.lb-pts{font-family:var(--fh);font-size:22px;font-weight:700;color:var(--or);min-width:54px;text-align:right}
+.lb-money{font-size:11px;font-weight:500;text-align:right}
+.lb-money.pos{color:var(--gr)}.lb-money.neg{color:var(--re)}.lb-money.zero{color:var(--mu)}
+.prog-bar{height:3px;background:var(--b1);border-radius:2px;overflow:hidden;margin-top:3px}
+.prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--or),#fb923c);transition:width .5s ease}
+
+/* BREAKDOWN TABLE */
+.bk-table{width:100%;border-collapse:collapse;font-size:12px}
+.bk-table th{text-align:left;font-family:var(--fh);font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--mu);padding:5px 7px;border-bottom:1px solid var(--b1);font-weight:600}
+.bk-table td{padding:7px;border-bottom:1px solid var(--b1);vertical-align:top}
+.bk-table tr:last-child td{border-bottom:none}
+.bk-calc{font-size:10px;color:var(--mu);line-height:1.6;margin-top:2px}
+.tag-c{display:inline-block;background:rgba(251,191,36,.15);color:var(--go);border:1px solid rgba(251,191,36,.28);border-radius:3px;font-size:9px;padding:1px 4px;font-family:var(--fh)}
+.tag-vc{display:inline-block;background:rgba(168,85,247,.15);color:var(--pu);border:1px solid rgba(168,85,247,.28);border-radius:3px;font-size:9px;padding:1px 4px;font-family:var(--fh)}
+
+/* SEASON TABLE */
+.season-table{width:100%;border-collapse:collapse;font-size:12px}
+.season-table th{text-align:center;font-family:var(--fh);font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--mu);padding:6px 4px;border-bottom:1px solid var(--b1)}
+.season-table th:first-child{text-align:left}
+.season-table td{padding:7px 4px;border-bottom:1px solid var(--b1);text-align:center;vertical-align:middle}
+.season-table td:first-child{text-align:left;font-family:var(--fh);font-size:13px;font-weight:700}
+.season-table tr:last-child td{border-bottom:none}
+.win-cell{color:var(--gr);font-weight:500}.lose-cell{color:var(--re)}.zero-cell{color:var(--mu)}
+.sitout-cell{color:var(--pu);font-size:10px;font-style:italic}
+
+/* RULES */
+.leg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:7px}
+.leg-item{background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:7px 10px;font-size:11px;line-height:1.5}
+.leg-cat{font-family:var(--fh);font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--or);margin-bottom:2px}
+.leg-neg .leg-cat,.leg-neg{color:var(--re)}
+
+/* MISC */
+.divider{display:flex;align-items:center;gap:8px;margin:14px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--b1)}
+.divider span{font-family:var(--fh);font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px}
+.flex-end{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.flex-bw{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.tag{display:inline-block;border-radius:4px;font-size:9px;padding:1px 6px;font-family:var(--fh)}
+.tag-or{background:rgba(249,115,22,.12);color:#fdba74;border:1px solid rgba(249,115,22,.25)}
+.tag-bl{background:rgba(59,130,246,.12);color:#93c5fd;border:1px solid rgba(59,130,246,.25)}
+.tag-gr{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25)}
+.tag-pu{background:rgba(168,85,247,.12);color:#d8b4fe;border:1px solid rgba(168,85,247,.25)}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:18px}
+@media(max-width:520px){.grid4{grid-template-columns:1fr 1fr}}
+.metric{background:var(--s2);border-radius:9px;padding:12px;text-align:center;border:1px solid var(--b1)}
+.metric.sitout-metric{border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.05)}
+.metric-lbl{font-size:11px;color:var(--mu);margin-bottom:3px}
+.metric-val{font-size:20px;font-weight:500;font-family:var(--fh);color:var(--tx)}
+.metric-val.sitout-val{color:var(--pu);font-size:14px}
+.metric-sub{font-size:10px;color:var(--mu);margin-top:2px}
+.info-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.18);border-radius:8px;padding:9px 13px;font-size:12px;color:#93c5fd;margin-bottom:12px;line-height:1.6}
+.warn-box{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:9px 13px;font-size:12px;color:#fde68a;margin-bottom:12px;line-height:1.6}
+.btn{padding:10px 20px;border:none;border-radius:9px;font-family:var(--fh);font-size:14px;font-weight:700;letter-spacing:.4px;cursor:pointer;transition:all .18s;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--or);color:#fff}.btn-primary:hover{background:#ea580c;transform:translateY(-1px)}
+.btn-secondary{background:var(--s2);border:1px solid var(--b2);color:var(--tx)}.btn-secondary:hover{border-color:var(--or);color:var(--or)}
+.btn-sm{padding:6px 13px;font-size:12px;border-radius:7px}
+.btn-ghost{background:none;border:1px solid var(--b2);border-radius:6px;color:var(--mu);font-size:11px;padding:3px 9px;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.btn-ghost:hover{color:var(--tx);border-color:var(--or)}
+.pool-mode-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--b2);background:transparent;color:var(--mu);font-family:var(--fh);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.pool-mode-btn.active-pool{background:rgba(59,130,246,.18);border-color:rgba(59,130,246,.5);color:#93c5fd}
+.pool-mode-btn:hover:not(.active-pool){color:var(--tx);border-color:var(--b2)}
+.p-item.locked-item{opacity:.4;cursor:not-allowed}
+.xi-dot{width:6px;height:6px;border-radius:50%;background:var(--gr);display:inline-block;margin-left:4px;flex-shrink:0;vertical-align:middle}
+.status-box{background:var(--s2);border:1px solid var(--b1);border-radius:11px;padding:22px;text-align:center}
+.spinner{width:34px;height:34px;border:3px solid var(--b1);border-top-color:var(--or);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status-text{color:var(--mu);font-size:13px}
+.status-text strong{color:var(--tx);display:block;margin-bottom:3px;font-family:var(--fh);font-size:15px}
+.err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.22);border-radius:10px;padding:14px;color:var(--re);font-size:12px;line-height:1.7}
+/* ADMIN */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-bg.hidden{display:none}
+.modal{background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:24px;max-width:460px;width:100%}
+.modal h3{font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:14px;color:var(--go)}
+.modal-input{width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:18px;font-family:var(--fb);letter-spacing:6px;text-align:center;margin-bottom:8px}
+.modal-input:focus{outline:none;border-color:var(--go)}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+.modal-err{font-size:12px;color:var(--re);margin-bottom:8px;min-height:16px}
+.admin-bar{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.admin-badge{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--gr);text-transform:uppercase;letter-spacing:.5px}
+.past-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--s2);border:1px solid var(--b1);border-radius:8px;margin-bottom:6px;gap:10px}
+.past-row-name{font-size:13px;font-family:var(--fh);font-weight:600;flex:1}
+.past-row-date{font-size:10px;color:var(--mu)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- CONFIG -->
+<div class="cfg">
+  <h3>⚙ Setup — enter once, saved automatically</h3>
+  <div class="cfg-row">
+    <div class="cfg-f"><label>CricketData API Key</label><input id="cfg-key" placeholder="Get free key at cricketdata.org" oninput="saveCfg()"></div>
+    <div class="cfg-f"><label>IPL 2026 Series ID</label><input id="cfg-sid" placeholder="Find via series search URL" oninput="saveCfg()"></div>
+    <div class="cfg-f"><label>Firebase DB URL (live sharing)</label><input id="cfg-fb" placeholder="https://your-app.firebaseio.com" oninput="saveCfg()"></div>
+    <button class="btn btn-primary btn-sm" onclick="fetchMatch()">Load Match</button>
+    <button class="btn btn-secondary btn-sm" id="admin-btn" onclick="openAdminModal()" title="Admin login">🔐 Admin</button>
+  </div>
+  <div class="cfg-note">
+    Series ID: <code>https://api.cricapi.com/v1/series?apikey=YOUR_KEY&search=IPL+2026</code> → copy <code>"id"</code> from first result. &nbsp;·&nbsp;
+    Firebase: free Realtime DB at <a href="https://console.firebase.google.com" target="_blank" style="color:var(--or)">console.firebase.google.com</a> (test mode), paste DB URL above for live sharing.
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-badge"><span class="dot"></span> IPL 2026</div>
+  <h1>Fantasy <em>Scorer</em></h1>
+  <p>Rishabh · Jay · Nitin · Shrey &nbsp;·&nbsp; Official Dream11 T20 points &nbsp;·&nbsp; Season tracker</p>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="goTab('match')">Match</button>
+  <button class="nav-btn" onclick="goTab('teams')">Teams</button>
+  <button class="nav-btn" onclick="goTab('live')">Live</button>
+  <button class="nav-btn" onclick="goTab('season')">Season</button>
+  <button class="nav-btn" onclick="goTab('rules')">Rules</button>
+</nav>
+
+<!-- MATCH TAB -->
+<div id="tab-match" class="sec active">
+  <div class="flex-bw" style="margin-bottom:10px">
+    <div style="font-family:var(--fh);font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Today's IPL Match</div>
+    <button class="btn-ghost" onclick="fetchMatch()">↻ Refresh</button>
+  </div>
+  <div id="match-disp">
+    <div class="status-box"><div class="status-text"><strong>Enter API key above → Load Match</strong>Playing 11s and match details appear automatically.</div></div>
+  </div>
+</div>
+
+<!-- TEAMS TAB -->
+<div id="tab-teams" class="sec">
+  <div class="info-box">
+    <strong>Selection:</strong> Each participant picks 5 unique players from the pool — no sharing across participants. Tap to cycle: <strong>select → Captain C (2×) → Vice Captain VC (1.5×) → deselect</strong>. C &amp; VC must differ. &nbsp;·&nbsp; <span style="color:var(--gr)">●</span> green dot = confirmed in Playing 11.
+  </div>
+
+  <!-- POOL MODE TOGGLE -->
+  <div id="pool-toggle-bar" style="display:none;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:11px 16px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-family:var(--fh);font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:2px">🏏 Player Pool</div>
+        <div id="pool-status-text" style="font-size:11px;color:var(--mu)"></div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button id="btn-pool-squad" class="pool-mode-btn active-pool" onclick="setPoolMode('squad')">Full Squad (30)</button>
+        <button id="btn-pool-xi"    class="pool-mode-btn"             onclick="setPoolMode('xi')">Playing 11 (22)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOCK BANNER -->
+  <div id="lock-banner" style="display:none;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:11px 16px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-family:var(--fh);font-size:13px;font-weight:700;color:var(--re);margin-bottom:2px">🔒 Teams Locked — Match has started</div>
+        <div style="font-size:11px;color:var(--mu)">Selections are frozen. Use override only if the match was delayed.</div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="unlockTeams()">✏️ Override &amp; Edit</button>
+    </div>
+  </div>
+
+  <!-- SIT-OUT SECTION -->
+  <div class="sitout-bar">
+    <h4>🪑 Sitting out this match</h4>
+    <div class="sitout-btns" id="sitout-btns"></div>
+    <div class="sitout-note">Sitting-out participants are excluded from scoring &amp; money for this match. Remaining active participants each pick 5 players from the current pool.</div>
+  </div>
+
+  <div id="teams-unavail" style="display:none">
+    <div class="status-box"><div class="status-text">Load match data first (Match tab)</div></div>
+  </div>
+  <!-- Non-admin read-only notice -->
+  <div id="view-only-notice" style="display:none;background:rgba(100,116,139,.08);border:1px solid rgba(100,116,139,.2);border-radius:8px;padding:9px 14px;margin-bottom:12px;font-size:12px;color:var(--mu)">
+    👁 View only — <a href="#" onclick="openAdminModal();return false;" style="color:var(--or)">Log in as admin</a> to edit team selections.
+  </div>
+  <div id="p-grid" class="p-grid"></div>
+  <div id="teams-action-btns" class="flex-end">
+    <button class="btn btn-secondary btn-sm" onclick="clearAllSelections()">Clear All</button>
+    <button class="btn btn-primary" onclick="calcAndSave()">Calculate Scores →</button>
+  </div>
+  <!-- Non-admin can still view latest scores -->
+  <div id="view-scores-btn" class="flex-end" style="display:none">
+    <button class="btn btn-primary" onclick="goTab('live')">View Live Scores →</button>
+  </div>
+</div>
+
+<!-- LIVE TAB -->
+<div id="tab-live" class="sec">
+  <div id="live-disp">
+    <div class="status-box"><div class="status-text"><strong>No scores yet</strong>Set teams and click Calculate Scores</div></div>
+  </div>
+</div>
+
+<!-- SEASON TAB -->
+<div id="tab-season" class="sec">
+  <div class="card">
+    <div class="card-title">Season Leaderboard — IPL 2026</div>
+    <div id="season-lb"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Match-by-Match History</div>
+    <div id="match-history"></div>
+  </div>
+  <div id="past-edit-card" class="card" style="display:none">
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+      <span>Edit Past Match Selections</span>
+      <span style="font-size:10px;color:var(--gr);font-family:var(--fh)">ADMIN ONLY</span>
+    </div>
+    <div style="font-size:12px;color:var(--mu);margin-bottom:12px">Select a completed match to update player selections and recalculate scores.</div>
+    <div id="past-edit-list"></div>
+  </div>
+</div>
+
+<!-- RULES TAB -->
+<div id="tab-rules" class="sec">
+  <div class="card">
+    <div class="card-title">Official Dream11 T20 Points System</div>
+
+    <div class="divider"><span>Batting</span></div>
+    <div class="leg-grid">
+      <div class="leg-item"><div class="leg-cat">Playing XI</div>+4 pts</div>
+      <div class="leg-item"><div class="leg-cat">Run scored</div>+1 pt per run</div>
+      <div class="leg-item"><div class="leg-cat">Boundary (4s)</div>+4 pts each</div>
+      <div class="leg-item"><div class="leg-cat">Six (6s)</div>+6 pts each</div>
+      <div class="leg-item"><div class="leg-cat">25 Run Bonus</div>+4 pts</div>
+      <div class="leg-item"><div class="leg-cat">Half-Century (50)</div>+8 pts (replaces 25-run)</div>
+      <div class="leg-item"><div class="leg-cat">75 Run Bonus</div>+12 pts</div>
+      <div class="leg-item"><div class="leg-cat">Century (100)</div>+16 pts (replaces all below)</div>
+      <div class="leg-item leg-neg"><div class="leg-cat">Duck (dismissed for 0)</div>−2 pts (BAT/WK/AR only)</div>
+    </div>
+
+    <div class="divider"><span>Strike Rate (min 10 balls faced)</span></div>
+    <div class="leg-grid">
+      <div class="leg-item"><div class="leg-cat">SR &gt; 170</div>+6 pts</div>
+      <div class="leg-item"><div class="leg-cat">SR 150.01–170</div>+4 pts</div>
+      <div class="leg-item"><div class="leg-cat">SR 130–150</div>+2 pts</div>
+      <div class="leg-item"><div class="leg-cat">SR 70.01–129.99</div>0 pts</div>
+      <div class="leg-item leg-neg"><div class="leg-cat">SR 60–70</div>−2 pts</div>
+      <div class="leg-item leg-neg"><div class="leg-cat">SR 50–59.99</div>−4 pts</div>
+      <div class="leg-item leg-neg"><div class="leg-cat">SR &lt; 50</div>−6 pts</div>
+    </div>
+    <div class="warn-box">SR penalties apply at SR ≤ 70 only. No SR points if fewer than 10 balls faced.</div>
+
+    <div class="divider"><span>Bowling</span></div>
+    <div class="leg-grid">
+      <div class="leg-item"><div class="leg-cat">Dot Ball</div>+1 pt each</div>
+      <div class="leg-item"><div class="leg-cat">Wicket (excl. run out)</div>+30 pts each</div>
+      <div class="leg-item"><div class="leg-cat">LBW / Bowled Bonus</div>+8 pts additional</div>
+      <div class="leg-item"><div class="leg-cat">3-Wicket Bonus</div>+4 pts</div>
+      <div class="leg-item"><div class="leg-cat">4-Wicket Bonus</div>+8 pts</div>
+      <div class="leg-item"><div class="leg-cat">5-Wicket Bonus</div>+12 pts</div>
+      <div class="leg-item"><div class="leg-cat">Maiden Over</div>+12 pts each</div>
+    </div>
+
+    <div class="divider"><span>Economy Rate (min 2 overs bowled)</span></div>
+    <div class="leg-grid">
+      <div class="leg-item"><div class="leg-cat">Eco &lt; 5</div>+6 pts</div>
+      <div class="leg-item"><div class="leg-cat">Eco 5–5.99</div>+4 pts</div>
+      <div class="leg-item"><div class="leg-cat">Eco 6–7</div>+2 pts</div>
+      <div class="leg-item"><div class="leg-cat">Eco 7.01–9.99</div>0 pts</div>
+      <div class="leg-item leg-neg"><div class="leg-cat">Eco 10–11</div>−2 pts</div>
+      <div class="leg-item leg-neg"><div class="leg-cat">Eco 11.01–12</div>−4 pts</div>
+      <div class="leg-item leg-neg"><div class="leg-cat">Eco &gt; 12</div>−6 pts</div>
+    </div>
+
+    <div class="divider"><span>Fielding</span></div>
+    <div class="leg-grid">
+      <div class="leg-item"><div class="leg-cat">Catch</div>+8 pts each</div>
+      <div class="leg-item"><div class="leg-cat">3-Catch Bonus</div>+4 pts (every 3rd catch)</div>
+      <div class="leg-item"><div class="leg-cat">Stumping</div>+12 pts</div>
+      <div class="leg-item"><div class="leg-cat">Run Out (direct hit)</div>+12 pts</div>
+      <div class="leg-item"><div class="leg-cat">Run Out (thrower)</div>+6 pts</div>
+      <div class="leg-item"><div class="leg-cat">Run Out (catcher)</div>+6 pts</div>
+    </div>
+
+    <div class="divider"><span>Captain / Vice Captain / Sit-Out</span></div>
+    <div class="leg-grid">
+      <div class="leg-item"><div class="leg-cat">Captain (C)</div>2× all points</div>
+      <div class="leg-item"><div class="leg-cat">Vice Captain (VC)</div>1.5× all points</div>
+      <div class="leg-item"><div class="leg-cat">Sitting out</div>0 pts, excluded from ₹ settlement</div>
+    </div>
+
+    <div class="divider"><span>Money Settlement (per match)</span></div>
+    <div class="leg-grid" style="grid-template-columns:1fr">
+      <div class="leg-item">Each participant's net ₹ = sum of (own score − each active opponent's score). Sitting-out participants are excluded from the calculation entirely — neither win nor lose money for that match.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ADMIN PIN MODAL -->
+<div id="admin-modal" class="modal-bg hidden">
+  <div class="modal">
+    <h3>🔐 Admin Login</h3>
+    <p style="font-size:12px;color:var(--mu);margin-bottom:14px">Enter the admin PIN to unlock team editing and match management.</p>
+    <input id="pin-input" class="modal-input" type="password" maxlength="6" placeholder="••••" onkeydown="if(event.key==='Enter')checkPin()">
+    <div id="pin-err" class="modal-err"></div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary btn-sm" onclick="closeAdminModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="checkPin()">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PAST MATCH MODAL -->
+<div id="past-modal" class="modal-bg hidden">
+  <div class="modal" style="max-width:560px">
+    <h3>✏️ Edit Past Match Selections</h3>
+    <div id="past-modal-body"></div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary btn-sm" onclick="closePastModal()">Close</button>
+      <button class="btn btn-primary btn-sm" onclick="recalcPastMatch()">Recalculate & Save</button>
+    </div>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+// ═══════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════
+const BASE  = 'https://api.cricapi.com/v1';
+const NAMES = ['Rishabh','Jay','Nitin','Shrey'];
+const AVCLASS = ['av1','av2','av3','av4'];
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let matchData = null;
+let allPlayers = [];
+let sel = NAMES.map(() => ({ players:[], captain:null, vc:null }));
+let sittingOut = [];       // array of names sitting out current match
+let seasonData = {};
+let fbDb = null;
+let poolMode = 'squad';    // 'squad' (30 players) | 'xi' (playing 11 only)
+let teamsUnlocked = false; // manual override after match start
+
+// ═══════════════════════════════════════
+//  CONFIG + FIREBASE
+// ═══════════════════════════════════════
+function cfg() {
+  return {
+    key: (document.getElementById('cfg-key')?.value||'').trim(),
+    sid: (document.getElementById('cfg-sid')?.value||'').trim(),
+    fb:  (document.getElementById('cfg-fb')?.value||'').trim()
+  };
+}
+function saveCfg() {
+  const c = cfg();
+  localStorage.setItem('ipl26_key', c.key);
+  localStorage.setItem('ipl26_sid', c.sid);
+  localStorage.setItem('ipl26_fb',  c.fb);
+  if (c.fb) initFirebase(c.fb);
+}
+function loadCfg() {
+  const k = localStorage.getItem('ipl26_key');
+  const s = localStorage.getItem('ipl26_sid');
+  const f = localStorage.getItem('ipl26_fb');
+  if (k) document.getElementById('cfg-key').value = k;
+  if (s) document.getElementById('cfg-sid').value = s;
+  if (f) { document.getElementById('cfg-fb').value = f; initFirebase(f); }
+}
+function initFirebase(url) {
+  try {
+    if (!window.firebase) return;
+    const existing = firebase.apps.find(a => a.name === 'ipl26');
+    const app = existing || firebase.initializeApp({ databaseURL: url }, 'ipl26');
+    fbDb = firebase.database(app);
+    fbDb.ref('ipl26/live').on('value', snap => {
+      const d = snap.val(); if (!d) return;
+      // Firebase strips empty arrays [] → null/undefined on round-trip.
+      // normSelArr / normArr re-hydrate them safely.
+      if (d.poolMode) { poolMode = d.poolMode; }
+      if (d.teamsUnlocked !== undefined) teamsUnlocked = d.teamsUnlocked;
+      if (d.sel) {
+        const raw = Array.isArray(d.sel) ? d.sel : Object.values(d.sel || {});
+        sel = raw.map(s => ({
+          players: Array.isArray(s?.players)
+            ? s.players
+            : (s?.players && typeof s.players === 'object' ? Object.values(s.players) : []),
+          captain: s?.captain ?? null,
+          vc:      s?.vc      ?? null
+        }));
+        // Ensure sel always has exactly 4 entries
+        while (sel.length < NAMES.length) sel.push({ players:[], captain:null, vc:null });
+      }
+      if (d.sitout) {
+        sittingOut = Array.isArray(d.sitout)
+          ? d.sitout
+          : (typeof d.sitout === 'object' ? Object.values(d.sitout) : []);
+      }
+      if (d.matchData) { matchData = d.matchData; allPlayers = [...(matchData.team1_playing11||[]),...(matchData.team2_playing11||[])]; renderMatchCard(); }
+      if (d.season)    { seasonData = d.season; }
+      renderSitoutBtns();
+      renderTeamsInner();
+      if (d.results)   renderLive(d.results, null, d.matchStatus||'upcoming', d.scoreNote||'');
+    });
+  } catch(e) { console.warn('Firebase:', e.message); }
+}
+async function fb(payload) {
+  if (!fbDb) return;
+  try { await fbDb.ref('ipl26/live').update(payload); } catch(e) {}
+}
+
+// ═══════════════════════════════════════
+//  TAB NAV
+// ═══════════════════════════════════════
+function goTab(name) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach((b,i) =>
+    b.classList.toggle('active', ['match','teams','live','season','rules'][i] === name));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'teams')  renderTeams();
+  if (name === 'season') renderSeason();
+}
+
+// ═══════════════════════════════════════
+//  API
+// ═══════════════════════════════════════
+async function apiGet(ep, params={}) {
+  const c = cfg();
+  if (!c.key) throw new Error('API key missing');
+  const qs = new URLSearchParams({ apikey: c.key, ...params });
+  const res = await fetch(`${BASE}/${ep}?${qs}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const json = await res.json();
+  if (json.status !== 'success') throw new Error(json.reason||'API error');
+  return json.data;
+}
+
+// ═══════════════════════════════════════
+//  FETCH MATCH
+// ═══════════════════════════════════════
+async function fetchMatch() {
+  const c = cfg();
+  if (!c.key) { alert('Enter your CricketData API key first'); return; }
+  if (!c.sid) { alert('Enter the IPL 2026 Series ID first'); return; }
+
+  setMD(`<div class="status-box"><div class="spinner"></div><div class="status-text"><strong>Fetching fixtures…</strong></div></div>`);
+  try {
+    const series  = await apiGet('series_info', { id: c.sid });
+    const matches = series.matchList || [];
+    if (!matches.length) throw new Error('No matches found — check series ID');
+
+    const todayIST = new Date().toLocaleDateString('en-CA', { timeZone:'Asia/Kolkata' });
+    let match = matches.find(m => m.dateTimeGMT?.startsWith(todayIST));
+    if (!match) match = [...matches].reverse().find(m => m.matchEnded) || matches[0];
+
+    setMD(`<div class="status-box"><div class="spinner"></div><div class="status-text"><strong>Loading playing 11…</strong>${match.name||''}</div></div>`);
+
+    let t1s={squad:[],xi:[]}, t2s={squad:[],xi:[]};
+    try {
+      const squads = await apiGet('match_squad', { id: match.id });
+      const teams  = Array.isArray(squads) ? squads : (squads.teams||[]);
+      t1s = buildSquad(teams[0]);
+      t2s = buildSquad(teams[1]);
+    } catch(e) { console.warn('Squad:', e.message); }
+
+    const teams = match.teams||[];
+    matchData = {
+      matchId: match.id, matchName: match.name||'',
+      team1: teams[0]||'Team 1', team2: teams[1]||'Team 2',
+      team1_short: shortName(teams[0]||'T1'), team2_short: shortName(teams[1]||'T2'),
+      venue: match.venue||'TBC', time: match.dateTimeGMT ? toIST(match.dateTimeGMT) : 'TBC',
+      dateTimeGMT: match.dateTimeGMT||null,
+      match_number: match.name||('Match '+(matches.indexOf(match)+1)),
+      status: match.dateTimeGMT?.startsWith(todayIST) ? 'today' : (match.matchEnded ? 'completed' : 'upcoming'),
+      team1_squad: t1s.squad, team1_playing11: t1s.xi,
+      team2_squad: t2s.squad, team2_playing11: t2s.xi
+    };
+    // active pool = full squad pre-toss, playing 11 after toss (if announced)
+    poolMode = (t1s.xi.length && t2s.xi.length) ? 'xi' : 'squad';
+    teamsUnlocked = false;
+    allPlayers = activePlayers();
+    // reset sit-out for new match
+    sittingOut = [];
+    renderMatchCard();
+    renderTeams();
+    await fb({ matchData, sel, sitout: sittingOut });
+  } catch(e) {
+    setMD(`<div class="err"><strong>Error:</strong> ${e.message}<br><br>Serve via <code>http://localhost</code> · Check API key · Verify series ID</div>`);
+  }
+}
+
+function buildSquad(team) {
+  if (!team) return { squad:[], xi:[] };
+  const all = (team.players||[]).slice(0,20);
+  // cricketdata.org can return isPlayingXI as true, 1, "true", or "1"
+  const isXIFlag = p => p.isPlayingXI === true || p.isPlayingXI === 1 || p.isPlayingXI === 'true' || p.isPlayingXI === '1';
+  const squad = all.map(p => ({ name:p.name, role:abbrevRole(p.role), isXI: isXIFlag(p) }));
+  const xi    = all.filter(isXIFlag).slice(0,11).map(p => ({ name:p.name, role:abbrevRole(p.role), isXI:true }));
+  return { squad, xi };
+}
+function activePlayers() {
+  if (!matchData) return [];
+  const use = (arr) => Array.isArray(arr) ? arr : [];
+  if (poolMode === 'xi' && matchData.team1_playing11?.length && matchData.team2_playing11?.length) {
+    return [...use(matchData.team1_playing11), ...use(matchData.team2_playing11)];
+  }
+  const s1 = use(matchData.team1_squad).length ? use(matchData.team1_squad) : use(matchData.team1_playing11);
+  const s2 = use(matchData.team2_squad).length ? use(matchData.team2_squad) : use(matchData.team2_playing11);
+  return [...s1, ...s2];
+}
+
+function isLocked() {
+  if (!matchData?.dateTimeGMT) return false;
+  if (teamsUnlocked) return false;
+  return Date.now() >= new Date(matchData.dateTimeGMT).getTime();
+}
+
+function setMD(html) { document.getElementById('match-disp').innerHTML = html; }
+
+// ═══════════════════════════════════════
+//  RENDER MATCH CARD
+// ═══════════════════════════════════════
+function renderMatchCard() {
+  if (!matchData) return;
+  const m = matchData;
+  const sl = { today:'🟢 Today', completed:'✅ Completed', upcoming:'🔵 Upcoming' };
+  const xiReady = m.team1_playing11?.length && m.team2_playing11?.length;
+  const noSq = !xiReady
+    ? `<div class="warn-box" style="margin-top:10px">⏳ Playing 11 not announced yet — selections open from full squad (15+15). Refresh after toss to auto-switch to Playing 11 view.</div>` : '';
+
+  const squadCard = (short, squad, xi) => {
+    const sqArr = Array.isArray(squad) ? squad : [];
+    const xiSet = new Set((Array.isArray(xi)?xi:[]).map(p=>p.name));
+    if (!sqArr.length) return `<div style="font-size:11px;color:var(--mu);padding:6px">Awaiting announcement</div>`;
+    return sqArr.map((p,i)=>{
+      const inXI = xiSet.has(p.name);
+      const xiBadge = xiSet.size ? (inXI ? `<span style="font-size:9px;background:rgba(16,185,129,.15);color:var(--gr);border:1px solid rgba(16,185,129,.3);border-radius:3px;padding:1px 4px;margin-left:auto;flex-shrink:0">XI</span>` : '') : '';
+      return `<div class="pp"><span class="pp-num">${i+1}</span><span>${p.name}</span><span class="pp-role">${p.role}</span>${xiBadge}</div>`;
+    }).join('');
+  };
+
+  setMD(`
+    <div class="match-hero">
+      <div class="flex-bw" style="margin-bottom:12px">
+        <span class="tag tag-or">${m.match_number}</span>
+        <span class="tag tag-bl">${sl[m.status]||m.status}</span>
+      </div>
+      <div class="match-teams">
+        <div class="team-blk"><div class="team-name">${m.team1}</div><div class="team-short">${m.team1_short}</div></div>
+        <div class="vs">VS</div>
+        <div class="team-blk"><div class="team-name">${m.team2}</div><div class="team-short">${m.team2_short}</div></div>
+      </div>
+      <div class="match-meta">
+        <div class="chip">📍 <span>${m.venue}</span></div>
+        <div class="chip">🕐 <span>${m.time}</span></div>
+        <div class="chip">👥 <span>${(m.team1_squad?.length||0)+(m.team2_squad?.length||0)} in squads${xiReady?' · '+((m.team1_playing11?.length||0)+(m.team2_playing11?.length||0))+' XI announced':''}</span></div>
+      </div>${noSq}
+    </div>
+    <div class="squads-grid">
+      <div class="squad-col">
+        <div class="squad-lbl">${m.team1_short} Squad${xiReady?` (${m.team1_squad?.length||0})`:''}</div>
+        ${squadCard(m.team1_short, m.team1_squad?.length ? m.team1_squad : m.team1_playing11, m.team1_playing11)}
+      </div>
+      <div class="squad-col">
+        <div class="squad-lbl">${m.team2_short} Squad${xiReady?` (${m.team2_squad?.length||0})`:''}</div>
+        ${squadCard(m.team2_short, m.team2_squad?.length ? m.team2_squad : m.team2_playing11, m.team2_playing11)}
+      </div>
+    </div>
+    <div class="flex-end" style="margin-top:12px">
+      <button class="btn btn-primary btn-sm" onclick="goTab('teams')">Set Teams →</button>
+    </div>`);
+}
+
+// ═══════════════════════════════════════
+//  SIT-OUT
+// ═══════════════════════════════════════
+function renderSitoutBtns() {
+  const el  = document.getElementById('sitout-btns');
+  const bar = el?.closest('.sitout-bar');
+  if (!el) return;
+  // hide entire sit-out section for non-admins
+  if (bar) bar.style.display = isAdmin() ? 'block' : 'none';
+  el.innerHTML = NAMES.map(n => {
+    const sitting = sittingOut.includes(n);
+    return `<button class="sitout-btn ${sitting?'sitting':''}" onclick="toggleSitout('${n}')">${n} ${sitting?'(sitting out)':''}</button>`;
+  }).join('');
+}
+
+function toggleSitout(name) {
+  if (!isAdmin()) { showToast('🔐 Admin login required'); openAdminModal(); return; }
+  if (sittingOut.includes(name)) {
+    sittingOut = sittingOut.filter(n => n !== name);
+    // restore their selection slot
+  } else {
+    sittingOut.push(name);
+    // clear their selections when they sit out
+    const pi = NAMES.indexOf(name);
+    sel[pi] = { players:[], captain:null, vc:null };
+  }
+  renderSitoutBtns();
+  renderTeamsInner();
+  fb({ sitout: sittingOut, sel, poolMode });
+}
+
+function activeParticipants() {
+  return NAMES.filter(n => !sittingOut.includes(n));
+}
+
+// ═══════════════════════════════════════
+//  RENDER TEAMS
+// ═══════════════════════════════════════
+function renderTeams() {
+  renderSitoutBtns();
+  updatePoolToggleBar();
+  updateLockBanner();
+  const unavail  = document.getElementById('teams-unavail');
+  const grid     = document.getElementById('p-grid');
+  const notice   = document.getElementById('view-only-notice');
+  const actBtns  = document.getElementById('teams-action-btns');
+  if (!matchData) {
+    unavail.style.display='block'; grid.style.display='none'; return;
+  }
+  allPlayers = activePlayers();
+  if (!allPlayers.length) {
+    unavail.style.display='block'; grid.style.display='none'; return;
+  }
+  unavail.style.display='none'; grid.style.display='grid';
+  // show/hide admin-gated elements
+  if (notice)  notice.style.display  = isAdmin() ? 'none' : 'block';
+  if (actBtns) actBtns.style.display = isAdmin() ? 'flex' : 'none';
+  const vBtn = document.getElementById('view-scores-btn');
+  if (vBtn) vBtn.style.display = isAdmin() ? 'none' : 'flex';
+  renderTeamsInner();
+}
+
+function setPoolMode(mode) {
+  if (!matchData) return;
+  if (mode === 'xi' && (!matchData.team1_playing11?.length || !matchData.team2_playing11?.length)) {
+    showToast('Playing 11 not announced yet — refresh after toss'); return;
+  }
+  poolMode = mode;
+  allPlayers = activePlayers();
+  updatePoolToggleBar();
+  renderTeamsInner();
+  fb({ poolMode });
+}
+
+function unlockTeams() {
+  teamsUnlocked = true;
+  updateLockBanner();
+  renderTeamsInner();
+}
+
+function updatePoolToggleBar() {
+  const bar = document.getElementById('pool-toggle-bar');
+  const txt = document.getElementById('pool-status-text');
+  const btnSq = document.getElementById('btn-pool-squad');
+  const btnXI = document.getElementById('btn-pool-xi');
+  if (!bar || !matchData) return;
+  bar.style.display = 'block';
+  const xiReady = matchData.team1_playing11?.length && matchData.team2_playing11?.length;
+  const sqCount = (matchData.team1_squad?.length||0) + (matchData.team2_squad?.length||0);
+  const xiCount = (matchData.team1_playing11?.length||0) + (matchData.team2_playing11?.length||0);
+  if (txt) txt.textContent = xiReady
+    ? `Squad (${sqCount} players) · Playing 11 announced (${xiCount} players) — switch anytime`
+    : `Playing 11 not yet announced · Selecting from full squad (${sqCount} players) · Refresh after toss`;
+  if (btnSq) btnSq.classList.toggle('active-pool', poolMode === 'squad');
+  if (btnXI) {
+    btnXI.classList.toggle('active-pool', poolMode === 'xi');
+    btnXI.style.opacity = xiReady ? '1' : '0.4';
+    btnXI.title = xiReady ? '' : 'Playing 11 not announced yet';
+  }
+}
+
+function updateLockBanner() {
+  const banner = document.getElementById('lock-banner');
+  if (!banner) return;
+  banner.style.display = isLocked() ? 'block' : 'none';
+}
+
+function renderTeamsInner() {
+  const grid = document.getElementById('p-grid');
+  if (!grid || !matchData) return;
+  grid.innerHTML = NAMES.map((name, pi) => {
+    const sitting = sittingOut.includes(name);
+    const s = sel[pi];
+    const overlay = sitting ? `<div class="sitout-overlay"><span>🪑 Sitting Out</span></div>` : '';
+    return `
+    <div class="p-card ${sitting?'sitout-card':''}">
+      ${overlay}
+      <div class="p-hdr">
+        <div class="p-av ${AVCLASS[pi]}">${name[0]}</div>
+        <div>
+          <div class="p-name">${name}</div>
+          <div style="font-size:10px;color:var(--mu)">${sitting?'Not playing this match':s.players.length+'/5 selected'}</div>
+        </div>
+      </div>
+      <div class="role-tags">
+        ${s.captain?`<span class="rtag rtag-c">C: ${s.captain.split(' ').pop()}</span>`:''}
+        ${s.vc?`<span class="rtag rtag-vc">VC: ${s.vc.split(' ').pop()}</span>`:''}
+      </div>
+      ${sitting?'':
+        `<div class="click-hint">Tap: select → <span>C (2×)</span> → VC (1.5×) → deselect</div>
+        <div class="player-list" id="plist-${pi}">${buildList(pi)}</div>`}
+    </div>`;
+  }).join('');
+}
+
+function buildList(pi) {
+  if (!matchData) return '';
+  const divider = lbl => `<div class="tdiv">${lbl}</div>`;
+  const use1 = poolMode === 'xi' && matchData.team1_playing11?.length
+    ? matchData.team1_playing11
+    : (matchData.team1_squad?.length ? matchData.team1_squad : matchData.team1_playing11 || []);
+  const use2 = poolMode === 'xi' && matchData.team2_playing11?.length
+    ? matchData.team2_playing11
+    : (matchData.team2_squad?.length ? matchData.team2_squad : matchData.team2_playing11 || []);
+  const xiSet1 = new Set((matchData.team1_playing11||[]).map(p=>p.name));
+  const xiSet2 = new Set((matchData.team2_playing11||[]).map(p=>p.name));
+  const xiAnnounced = matchData.team1_playing11?.length > 0;
+  return divider(matchData.team1_short + (poolMode==='squad' && use1.length?' ('+use1.length+')':''))
+    + use1.map(p => pItem(pi, p.name, xiAnnounced && xiSet1.has(p.name))).join('')
+    + divider(matchData.team2_short + (poolMode==='squad' && use2.length?' ('+use2.length+')':''))
+    + use2.map(p => pItem(pi, p.name, xiAnnounced && xiSet2.has(p.name))).join('');
+}
+
+function pItem(pi, name, isXI=false) {
+  const s = sel[pi];
+  if (!Array.isArray(s.players)) s.players = s.players && typeof s.players === 'object' ? Object.values(s.players) : [];
+  const own    = s.players.includes(name);
+  const who    = takenBy(name, pi);
+  const taken  = who !== -1;
+  const isCap  = s.captain === name;
+  const isVc   = s.vc      === name;
+  const locked = isLocked() && !isAdmin();
+  const nonAdmin = !isAdmin();
+  // non-admin: can only view, not tap
+  const noInteract = nonAdmin || (locked && !own);
+  const cls    = noInteract && !own ? 'locked-item' : taken ? 'taken' : isCap ? 'cap' : isVc ? 'vc' : own ? 'sel' : '';
+  const check  = (own||isCap||isVc) ? `<svg width="9" height="9" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>` : '';
+  const xiDot  = (isXI && poolMode === 'squad') ? `<span class="xi-dot" title="In Playing 11"></span>` : '';
+  const badge  = isCap ? `<span class="p-badge p-badge-c">C 2×</span>`
+               : isVc  ? `<span class="p-badge p-badge-vc">VC 1.5×</span>`
+               : taken ? `<span class="p-badge p-badge-tk">${NAMES[who]}</span>` : '';
+  const onclick = (taken || noInteract) ? '' : `onclick="tap(${pi},'${name.replace(/'/g,"\\'")}')"`;
+  return `<div class="p-item ${cls}" ${onclick}><div class="p-chk">${check}</div><span>${name}</span>${xiDot}${badge}</div>`;
+}
+
+function takenBy(name, excludePi) {
+  for (let i = 0; i < NAMES.length; i++) {
+    if (i === excludePi) continue;
+    if (sittingOut.includes(NAMES[i])) continue;
+    const pl = Array.isArray(sel[i]?.players) ? sel[i].players
+             : (sel[i]?.players && typeof sel[i].players === 'object' ? Object.values(sel[i].players) : []);
+    if (pl.includes(name)) return i;
+  }
+  return -1;
+}
+
+function tap(pi, name) {
+  if (!isAdmin()) { showToast('🔐 Admin login required to edit teams'); openAdminModal(); return; }
+  if (isLocked()) { showToast('🔒 Teams locked — match has started. Use Override to edit.'); return; }
+  const s = sel[pi];
+  // Guard: Firebase can return players as object or null — normalize to array
+  if (!Array.isArray(s.players)) s.players = s.players && typeof s.players === 'object' ? Object.values(s.players) : [];
+  const own = s.players.includes(name);
+  if (!own) {
+    if (s.players.length >= 5) { showToast(`${NAMES[pi]} already has 5 players`); return; }
+    if (takenBy(name, pi) !== -1) { showToast(`${name} is already taken`); return; }
+    s.players.push(name);
+  } else if (name !== s.captain && name !== s.vc) {
+    s.captain = name; // select → C
+  } else if (name === s.captain) {
+    s.captain = null; s.vc = name; // C → VC
+  } else if (name === s.vc) {
+    s.vc = null; s.players = s.players.filter(p => p !== name); // VC → deselect
+  }
+  // re-render all lists (availability changes)
+  NAMES.forEach((_, i) => { const el = document.getElementById(`plist-${i}`); if (el) el.innerHTML = buildList(i); });
+  // update header count & role tags
+  const card = document.getElementById(`plist-${pi}`)?.closest('.p-card');
+  if (card) {
+    card.querySelector('.p-hdr div div:last-child').textContent = sel[pi].players.length+'/5 selected';
+    card.querySelector('.role-tags').innerHTML =
+      (sel[pi].captain?`<span class="rtag rtag-c">C: ${sel[pi].captain.split(' ').pop()}</span>`:'') +
+      (sel[pi].vc     ?`<span class="rtag rtag-vc">VC: ${sel[pi].vc.split(' ').pop()}</span>`:'');
+  }
+  fb({ sel });
+}
+
+function clearAllSelections() {
+  if (!isAdmin()) { showToast('🔐 Admin login required'); openAdminModal(); return; }
+  sel = NAMES.map(() => ({ players:[], captain:null, vc:null }));
+  renderTeamsInner();
+  fb({ sel });
+}
+
+// ═══════════════════════════════════════
+//  CALCULATE + SAVE
+// ═══════════════════════════════════════
+async function calcAndSave() {
+  const active = activeParticipants();
+  if (active.length < 2) { showToast('Need at least 2 active participants'); return; }
+
+  // validate only active participants
+  for (const name of active) {
+    const pi = NAMES.indexOf(name);
+    if (sel[pi].players.length !== 5) { showToast(`${name} must select exactly 5 players`); return; }
+    if (!sel[pi].captain) { showToast(`${name} needs a Captain`); return; }
+    if (!sel[pi].vc)      { showToast(`${name} needs a Vice Captain`); return; }
+    if (sel[pi].captain === sel[pi].vc) { showToast(`${name}: C and VC must be different`); return; }
+  }
+  // uniqueness across active participants
+  const pool = active.flatMap(n => sel[NAMES.indexOf(n)].players);
+  if (new Set(pool).size < pool.length) { showToast('Player conflict — two participants share a player'); return; }
+
+  document.getElementById('live-disp').innerHTML = `<div class="status-box"><div class="spinner"></div><div class="status-text"><strong>Fetching scorecard…</strong></div></div>`;
+  goTab('live');
+
+  allPlayers = activePlayers();
+  let stats = {}, matchStatus = 'upcoming', scoreNote = '';
+
+  try {
+    const raw = await apiGet('match_scorecard', { id: matchData.matchId });
+    // cricketdata.org wraps scorecard differently depending on match state:
+    // raw may be the match object itself, or have raw.scorecard, or raw.score
+    const innings = raw.scorecard || raw.score || (Array.isArray(raw) ? raw : []);
+
+    innings.forEach(inn => {
+      (inn.batting||[]).forEach(b => {
+        const nm = b.batsman?.name || b.batsmanName; if (!nm) return;
+        if (!stats[nm]) stats[nm] = initStats();
+        stats[nm].runs      += parseInt(b.r||b.runs||0,10);
+        stats[nm].balls     += parseInt(b.b||b.balls||0,10);
+        stats[nm].fours     += parseInt(b['4s']||b.fours||0,10);
+        stats[nm].sixes     += parseInt(b['6s']||b.sixes||0,10);
+        stats[nm].batted     = true;
+        const dismissal = (b.dismissal||b.outDesc||'').toLowerCase();
+        stats[nm].dismissed  = dismissal !== '' && dismissal !== 'not out' && dismissal !== 'batting';
+      });
+      (inn.bowling||[]).forEach(bw => {
+        const nm = bw.bowler?.name || bw.bowlerName; if (!nm) return;
+        if (!stats[nm]) stats[nm] = initStats();
+        stats[nm].wickets    += parseInt(bw.w||bw.wickets||0,10);
+        // overs like "3.4" = 3 complete + 4 balls
+        const ov = parseFloat(bw.o||bw.overs||0);
+        const fullOv = Math.floor(ov), partBalls = Math.round((ov - fullOv)*10);
+        stats[nm].overs      += fullOv + partBalls/6;
+        stats[nm].economy     = parseFloat(bw.eco||bw.economy||0);
+        stats[nm].maidens    += parseInt(bw.m||bw.maidens||0,10);
+        // dot balls: some endpoints give wd (wide) count — dots = balls - runs conceded (approximate)
+        const bowlerRuns = parseInt(bw.r||bw.runs||0,10);
+        const bowlerBalls = fullOv*6 + partBalls;
+        // best approximation for dots when not explicitly given
+        if (bw.dots !== undefined) stats[nm].dots += parseInt(bw.dots,10);
+        stats[nm].isBowler    = true;
+      });
+    });
+
+    // dismissal-based fielding + LBW/Bowled bonus
+    innings.forEach(inn => {
+      (inn.batting||[]).forEach(b => {
+        const d   = (b.dismissal||b.outDesc||'').toLowerCase();
+        const bwl = b.bowler?.name || b.bowlerName;
+        if (d.includes('lbw') || /^b\s/.test(d) || d === 'bowled') {
+          if (bwl && stats[bwl]) stats[bwl].lbwBowled++;
+        }
+        if (d.includes('caught'))  { const f = exF(d,'c ');          if(f && stats[f]) stats[f].catches++; }
+        if (d.includes('stumped')) { const f = exF(d,'st ');         if(f && stats[f]) stats[f].stumpings++; }
+        if (d.includes('run out')) { const f = exF(d,'run out (');   if(f && stats[f]) stats[f].runouts++; }
+      });
+    });
+
+    // determine match state — cricketdata.org uses matchEnded / matchStarted booleans on the root
+    const matchEnded   = raw.matchEnded   === true || raw.matchEnded   === 1;
+    const matchStarted = raw.matchStarted === true || raw.matchStarted === 1;
+    matchStatus = matchEnded ? 'completed' : matchStarted ? 'live' : 'upcoming';
+    scoreNote   = matchStatus==='completed' ? 'Final scores'
+                : matchStatus==='live'      ? 'Live — recalculate for updates'
+                                            : 'Match not started — base pts only';
+  } catch(e) {
+    console.warn('Scorecard fetch error:', e.message);
+    scoreNote = `Scorecard unavailable (${e.message}) — base pts only`;
+    allPlayers.forEach(p => { if (!stats[p.name]) stats[p.name] = initStats(); });
+  }
+
+  // pts per player
+  const playerPts = {};
+  allPlayers.forEach(({name}) => {
+    const s = stats[name] || initStats();
+    playerPts[name] = { ...s, pts: dream11Pts(s) };
+  });
+
+  // totals per participant
+  const results = NAMES.map((name, pi) => {
+    if (sittingOut.includes(name)) return { name, pi, total:0, breakdown:[], sitout:true, captain:null, vc:null };
+    const s = sel[pi];
+    let total=0, breakdown=[];
+    s.players.forEach(pname => {
+      const base  = playerPts[pname]?.pts ?? 4;
+      const isCap = s.captain === pname;
+      const isVc  = s.vc      === pname;
+      const mult  = isCap ? 2 : isVc ? 1.5 : 1;
+      const final = parseFloat((base * mult).toFixed(1));
+      total += final;
+      breakdown.push({ name:pname, base, isCap, isVc, mult, final, stats:playerPts[pname] });
+    });
+    return { name, pi, total:parseFloat(total.toFixed(1)), breakdown, sitout:false,
+             captain: s.captain, vc: s.vc };
+  });
+
+  // money: only among active participants
+  const activeResults = results.filter(r => !r.sitout);
+  results.forEach(r => {
+    if (r.sitout) { r.net = 0; return; }
+    r.net = activeResults.reduce((acc, other) => {
+      if (other.pi === r.pi) return acc;
+      return acc + (r.total - other.total);
+    }, 0);
+    r.net = parseFloat(r.net.toFixed(1));
+  });
+
+  const sorted = [...results].sort((a,b) => {
+    if (a.sitout && !b.sitout) return 1;
+    if (!a.sitout && b.sitout) return -1;
+    return b.total - a.total;
+  });
+
+  // persist to season
+  const matchEntry = {
+    matchName: matchData.matchName || matchData.match_number,
+    date: new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Kolkata'}),
+    status: matchStatus,
+    results: results.map(r => ({ name:r.name, total:r.total, net:r.net, sitout:r.sitout||false }))
+  };
+  seasonData[matchData.matchId] = matchEntry;
+  localStorage.setItem('ipl26_season', JSON.stringify(seasonData));
+  await fb({ results: sorted, season: seasonData, matchStatus, scoreNote, sel, sitout: sittingOut });
+
+  renderLive(sorted, playerPts, matchStatus, scoreNote);
+}
+
+// ═══════════════════════════════════════
+//  RENDER LIVE
+// ═══════════════════════════════════════
+function renderLive(sorted, playerPts, matchStatus, scoreNote) {
+  if (!sorted) return;
+  const active = sorted.filter(r => !r.sitout);
+  const maxPts = Math.max(...active.map(r => r.total), 1);
+  const stLabel = { completed:'✅ Final', live:'🔴 Live', upcoming:'⏳ Pre-match' };
+  const rnkCls  = ['r1','r2','r3','rn'];
+  const rowCls  = ['r1','r2','r3',''];
+
+  let rankIdx = 0;
+  let html = `
+    <div class="flex-bw" style="margin-bottom:10px">
+      <span class="tag tag-bl">${stLabel[matchStatus]||matchStatus}</span>
+      <span style="color:var(--mu);font-size:11px">${scoreNote||''}</span>
+      <button class="btn-ghost" onclick="calcAndSave()">↻ Recalculate</button>
+    </div>
+    <div class="grid4">
+      ${sorted.map(r => r.sitout
+        ? `<div class="metric sitout-metric"><div class="metric-lbl">${r.name}</div><div class="metric-val sitout-val">Sitting out</div><div class="metric-sub">—</div></div>`
+        : `<div class="metric"><div class="metric-lbl">#${active.findIndex(x=>x.name===r.name)+1} ${r.name}</div><div class="metric-val">${r.total}</div><div class="metric-sub" style="color:${r.net>=0?'var(--gr)':'var(--re)'}">₹${r.net>=0?'+':''}${r.net}</div></div>`
+      ).join('')}
+    </div>
+    <div style="margin-bottom:20px">
+      ${sorted.map(r => {
+        if (r.sitout) return `<div class="lb-row"><div class="rnk rs">🪑</div><div style="flex:1"><span class="lb-name" style="color:var(--pu)">${r.name}</span><div style="font-size:11px;color:var(--pu)">Sitting out this match</div></div></div>`;
+        const i = rankIdx++;
+        return `<div class="lb-row ${rowCls[i]||''}">
+          <div class="rnk ${rnkCls[i]||'rn'}">${i+1}</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:baseline;gap:7px">
+              <span class="lb-name">${r.name}</span>
+              ${r.captain?`<span style="font-size:10px;color:var(--go)">C: ${r.captain.split(' ').pop()}</span>`:''}
+              ${r.vc?`<span style="font-size:10px;color:var(--pu)">VC: ${r.vc.split(' ').pop()}</span>`:''}
+            </div>
+            <div class="prog-bar"><div class="prog-fill" style="width:${Math.round(r.total/maxPts*100)}%"></div></div>
+          </div>
+          <div style="text-align:right">
+            <div class="lb-pts">${r.total}</div>
+            <div class="lb-money ${r.net>0?'pos':r.net<0?'neg':'zero'}">₹${r.net>=0?'+':''}${r.net}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="divider"><span>Player-by-player breakdowns</span></div>`;
+
+  NAMES.forEach((name, pi) => {
+    const r = sorted.find(x => x.name === name);
+    if (!r || r.sitout || !r.breakdown) return;
+    html += `
+      <div class="card" style="margin-bottom:12px">
+        <div class="flex-bw" style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div class="p-av ${AVCLASS[pi]}" style="width:30px;height:30px;font-size:13px">${name[0]}</div>
+            <div style="font-family:var(--fh);font-size:16px;font-weight:700">${name}</div>
+          </div>
+          <div style="font-family:var(--fh);font-size:18px;font-weight:700;color:var(--or)">
+            ${r.total} pts &nbsp;
+            <span style="font-size:13px;color:${r.net>=0?'var(--gr)':'var(--re)'}">₹${r.net>=0?'+':''}${r.net}</span>
+          </div>
+        </div>
+        <table class="bk-table">
+          <thead><tr><th>Player</th><th>Base</th><th>Role</th><th>×</th><th style="text-align:right">Final</th></tr></thead>
+          <tbody>
+            ${r.breakdown.map(b=>`
+              <tr>
+                <td>
+                  <div>${b.name}</div>
+                  <div class="bk-calc">${buildCalcLine(b)}</div>
+                </td>
+                <td style="color:var(--mu)">${b.base}</td>
+                <td>${b.isCap?'<span class="tag-c">C</span>':b.isVc?'<span class="tag-vc">VC</span>':''}</td>
+                <td style="color:var(--mu)">${b.mult}×</td>
+                <td style="text-align:right;font-weight:500;color:var(--gr)">${b.final}</td>
+              </tr>`).join('')}
+            <tr>
+              <td colspan="4" style="color:var(--mu);font-family:var(--fh);font-weight:700">Total</td>
+              <td style="text-align:right;color:var(--or);font-family:var(--fh);font-weight:700;font-size:15px">${r.total}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>`;
+  });
+
+  document.getElementById('live-disp').innerHTML = html;
+}
+
+// ═══════════════════════════════════════
+//  DETAILED CALC LINE
+// ═══════════════════════════════════════
+function buildCalcLine(b) {
+  const s = b.stats;
+  if (!s) return 'Base points only';
+  const p = [];
+  p.push('XI: +4');
+  if (s.runs)  p.push(`${s.runs} runs: +${s.runs}`);
+  if (s.fours) p.push(`${s.fours}×4s: +${s.fours*4}`);
+  if (s.sixes) p.push(`${s.sixes}×6s: +${s.sixes*6}`);
+  // milestone (only highest)
+  if      (s.runs>=100) p.push('Century bonus: +16');
+  else if (s.runs>=75)  p.push('75-run bonus: +12');
+  else if (s.runs>=50)  p.push('50-run bonus: +8');
+  else if (s.runs>=25)  p.push('25-run bonus: +4');
+  if (s.batted && s.dismissed && s.runs===0) p.push('Duck: −2');
+  const balls = s.balls||0;
+  if (balls>=10) {
+    const sr = s.runs/balls*100;
+    if      (sr>170)   p.push(`SR ${sr.toFixed(0)}: +6`);
+    else if (sr>150)   p.push(`SR ${sr.toFixed(0)}: +4`);
+    else if (sr>=130)  p.push(`SR ${sr.toFixed(0)}: +2`);
+    else if (sr>=60 && sr<=70) p.push(`SR ${sr.toFixed(0)}: −2`);
+    else if (sr>=50 && sr<60)  p.push(`SR ${sr.toFixed(0)}: −4`);
+    else if (sr<50)    p.push(`SR ${sr.toFixed(0)}: −6`);
+  }
+  if (s.dots)     p.push(`${s.dots} dots: +${s.dots}`);
+  if (s.wickets)  p.push(`${s.wickets} wkt: +${s.wickets*30}`);
+  if (s.lbwBowled) p.push(`LBW/Bowled: +${s.lbwBowled*8}`);
+  if (s.wickets>=5) p.push('5-wkt bonus: +12');
+  else if (s.wickets>=4) p.push('4-wkt bonus: +8');
+  else if (s.wickets>=3) p.push('3-wkt bonus: +4');
+  if (s.maidens)  p.push(`${s.maidens} maiden: +${s.maidens*12}`);
+  const overs = s.overs||0;
+  if (overs>=2) {
+    const eco = s.economy||0;
+    if      (eco>0 && eco<5)   p.push(`Eco ${eco.toFixed(1)}: +6`);
+    else if (eco<6)            p.push(`Eco ${eco.toFixed(1)}: +4`);
+    else if (eco<=7)           p.push(`Eco ${eco.toFixed(1)}: +2`);
+    else if (eco>=10 && eco<=11) p.push(`Eco ${eco.toFixed(1)}: −2`);
+    else if (eco<=12)          p.push(`Eco ${eco.toFixed(1)}: −4`);
+    else if (eco>12)           p.push(`Eco ${eco.toFixed(1)}: −6`);
+  }
+  const c = s.catches||0;
+  if (c) {
+    p.push(`${c} catch: +${c*8}`);
+    const bonus = Math.floor(c/3)*4;
+    if (bonus) p.push(`3-catch bonus: +${bonus}`);
+  }
+  if (s.stumpings) p.push(`${s.stumpings} stumping: +${s.stumpings*12}`);
+  if (s.runouts)   p.push(`${s.runouts} run-out: +${s.runouts*6}`);
+  return p.join(' · ') || 'Base only';
+}
+
+// ═══════════════════════════════════════
+//  DREAM11 T20 POINTS — EXACT FROM EXCEL
+// ═══════════════════════════════════════
+function dream11Pts(s) {
+  let pts = 4; // Playing XI
+
+  // ── Batting ──
+  const runs = s.runs||0, balls = s.balls||0;
+  pts += runs;                          // +1 per run
+  pts += (s.fours||0) * 4;             // +4 per boundary
+  pts += (s.sixes||0) * 6;             // +6 per six
+
+  // Milestone — only highest applies
+  if      (runs >= 100) pts += 16;
+  else if (runs >= 75)  pts += 12;
+  else if (runs >= 50)  pts += 8;
+  else if (runs >= 25)  pts += 4;
+
+  // Duck (dismissed for 0) — BAT/WK/AR only (not pure bowlers)
+  if (s.batted && s.dismissed && runs === 0 && !s.isBowler) pts -= 2;
+  // Note: we apply duck to all who batted & dismissed for 0; isBowler flag can refine if role data available
+
+  // Strike Rate (min 10 balls)
+  if (balls >= 10) {
+    const sr = runs / balls * 100;
+    if      (sr > 170)           pts += 6;
+    else if (sr > 150)           pts += 4;
+    else if (sr >= 130)          pts += 2;
+    // penalty only at SR ≤ 70
+    else if (sr >= 60 && sr <= 70) pts -= 2;
+    else if (sr >= 50 && sr < 60)  pts -= 4;
+    else if (sr < 50)              pts -= 6;
+    // 70.01–129.99 = 0
+  }
+
+  // ── Bowling ──
+  const wkts = s.wickets||0;
+  pts += (s.dots||0) * 1;              // +1 per dot ball
+  pts += wkts * 30;                    // +30 per wicket
+  pts += (s.lbwBowled||0) * 8;        // +8 LBW/Bowled bonus
+  pts += (s.maidens||0) * 12;         // +12 per maiden
+
+  // Wicket haul bonuses (stacking — each bonus is separate)
+  if      (wkts >= 5) pts += 12;
+  else if (wkts >= 4) pts += 8;
+  else if (wkts >= 3) pts += 4;
+
+  // Economy Rate (min 2 overs)
+  const overs = s.overs||0;
+  if (overs >= 2) {
+    const eco = s.economy||0;
+    if      (eco > 0 && eco < 5)    pts += 6;
+    else if (eco >= 5  && eco < 6)  pts += 4;
+    else if (eco >= 6  && eco <= 7) pts += 2;
+    // 7.01–9.99 = 0
+    else if (eco >= 10 && eco <= 11) pts -= 2;
+    else if (eco > 11  && eco <= 12) pts -= 4;
+    else if (eco > 12)               pts -= 6;
+  }
+
+  // ── Fielding ──
+  const c = s.catches||0;
+  pts += c * 8;
+  pts += Math.floor(c / 3) * 4;       // every 3rd catch = +4 bonus
+  pts += (s.stumpings||0) * 12;
+  pts += (s.runouts||0)   * 6;        // treating all run-outs as indirect (+6); direct would be +12
+
+  return parseFloat(pts.toFixed(1));
+}
+
+// ═══════════════════════════════════════
+//  RENDER SEASON
+// ═══════════════════════════════════════
+function renderSeason() {
+  const matches = Object.entries(seasonData);
+  if (!matches.length) {
+    document.getElementById('season-lb').innerHTML = `<div style="color:var(--mu);font-size:13px;padding:8px">No match data yet — scores appear here after each match.</div>`;
+    document.getElementById('match-history').innerHTML = '';
+    return;
+  }
+  const totals={}, nets={}, played={};
+  NAMES.forEach(n => { totals[n]=0; nets[n]=0; played[n]=0; });
+  matches.forEach(([,m]) => {
+    (m.results||[]).forEach(r => {
+      if (!r.sitout) { totals[r.name]=(totals[r.name]||0)+r.total; played[r.name]=(played[r.name]||0)+1; }
+      nets[r.name]=(nets[r.name]||0)+(r.net||0);
+    });
+  });
+  const sorted = NAMES.slice().sort((a,b) => totals[b]-totals[a]);
+  const maxT   = Math.max(...sorted.map(n=>totals[n]),1);
+  const rnkCls=['r1','r2','r3','rn'];
+  const rowCls=['r1','r2','r3',''];
+
+  document.getElementById('season-lb').innerHTML = sorted.map((name,i)=>`
+    <div class="lb-row ${rowCls[i]||''}" style="margin-bottom:7px">
+      <div class="rnk ${rnkCls[i]||'rn'}">${i+1}</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span class="lb-name">${name}</span>
+          <span style="font-size:10px;color:var(--mu)">${played[name]} match${played[name]!==1?'es':''}</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${Math.round(totals[name]/maxT*100)}%"></div></div>
+      </div>
+      <div style="text-align:right">
+        <div class="lb-pts">${totals[name].toFixed(1)}</div>
+        <div class="lb-money ${nets[name]>=0?'pos':'neg'}">₹${nets[name]>=0?'+':''}${nets[name].toFixed(1)}</div>
+      </div>
+    </div>`).join('');
+
+  // match history table
+  let tbl = `<div style="overflow-x:auto"><table class="season-table"><thead><tr>
+    <th>Match</th>${NAMES.map(n=>`<th>${n}</th>`).join('')}
+  </tr></thead><tbody>`;
+  matches.forEach(([,m])=>{
+    const row={};
+    (m.results||[]).forEach(r=>{row[r.name]=r;});
+    tbl+=`<tr>
+      <td><div style="font-size:12px">${m.matchName||'Match'}</div><div style="font-size:10px;color:var(--mu)">${m.date||''}</div></td>
+      ${NAMES.map(n=>{
+        const r=row[n];
+        if (!r) return `<td>—</td>`;
+        if (r.sitout) return `<td class="sitout-cell">Sat out</td>`;
+        return `<td><div>${r.total}</div><div class="${(r.net||0)>=0?'win-cell':'lose-cell'}" style="font-size:10px">₹${(r.net||0)>=0?'+':''}${(r.net||0).toFixed(1)}</div></td>`;
+      }).join('')}
+    </tr>`;
+  });
+  tbl+=`<tr style="background:var(--s2)">
+    <td style="font-family:var(--fh);font-size:13px;color:var(--go)">Season Total</td>
+    ${NAMES.map(n=>`<td>
+      <div style="font-family:var(--fh);font-weight:700">${totals[n].toFixed(1)}</div>
+      <div class="${nets[n]>=0?'win-cell':'lose-cell'}" style="font-size:10px;font-weight:500">₹${nets[n]>=0?'+':''}${nets[n].toFixed(1)}</div>
+    </td>`).join('')}
+  </tr></tbody></table></div>`;
+  document.getElementById('match-history').innerHTML = tbl;
+  // refresh past edit list if admin is active
+  if (isAdmin && isAdmin()) renderPastEditList();
+}
+
+// ═══════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════
+function initStats(){
+  return {runs:0,balls:0,fours:0,sixes:0,batted:false,dismissed:false,
+          wickets:0,overs:0,economy:0,maidens:0,dots:0,lbwBowled:0,isBowler:false,
+          catches:0,stumpings:0,runouts:0};
+}
+function exF(text, prefix){
+  const i=text.indexOf(prefix); if(i===-1)return null;
+  return text.slice(i+prefix.length).split(/[\s,)]/)[0];
+}
+function toIST(s){
+  try{
+    const d = new Date(s);
+    // Force 24-hr HH:MM in IST (UTC+5:30)
+    const ist = new Date(d.getTime() + (5*60+30)*60000);
+    const hh  = String(ist.getUTCHours()).padStart(2,'0');
+    const mm  = String(ist.getUTCMinutes()).padStart(2,'0');
+    return hh+':'+mm+' IST';
+  }catch{return s;}
+}
+function shortName(n=''){
+  const m={'Mumbai Indians':'MI','Chennai Super Kings':'CSK','Royal Challengers Bengaluru':'RCB','Royal Challengers Bangalore':'RCB','Kolkata Knight Riders':'KKR','Delhi Capitals':'DC','Rajasthan Royals':'RR','Sunrisers Hyderabad':'SRH','Punjab Kings':'PBKS','Lucknow Super Giants':'LSG','Gujarat Titans':'GT'};
+  return m[n]||n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,3);
+}
+function abbrevRole(r=''){
+  const rl=r.toLowerCase();
+  if(rl.includes('wicket')||rl.includes('keeper'))return 'WK';
+  if(rl.includes('allround')||rl.includes('all-round'))return 'AR';
+  if(rl.includes('bowl'))return 'BWL';
+  if(rl.includes('bat'))return 'BAT';
+  return r.substring(0,3).toUpperCase()||'ALL';
+}
+function showToast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';Object.assign(t.style,{position:'fixed',bottom:'24px',left:'50%',transform:'translateX(-50%)',background:'var(--s3,#1c2840)',border:'1px solid rgba(255,255,255,.13)',borderRadius:'8px',padding:'10px 18px',fontSize:'13px',color:'var(--tx)',zIndex:'999',transition:'opacity .3s',whiteSpace:'nowrap'});document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';},2600);
+}
+
+// ═══════════════════════════════════════
+//  ADMIN SYSTEM
+// ═══════════════════════════════════════
+const ADMIN_PIN = '1234'; // ← change this to your chosen PIN
+let adminUnlocked = false;
+
+function isAdmin() { return adminUnlocked; }
+
+function openAdminModal() {
+  document.getElementById('admin-modal').classList.remove('hidden');
+  document.getElementById('pin-input').value = '';
+  document.getElementById('pin-err').textContent = '';
+  setTimeout(() => document.getElementById('pin-input').focus(), 50);
+}
+function closeAdminModal() {
+  document.getElementById('admin-modal').classList.add('hidden');
+}
+function checkPin() {
+  const val = document.getElementById('pin-input').value.trim();
+  if (val === ADMIN_PIN) {
+    adminUnlocked = true;
+    closeAdminModal();
+    showAdminBar();
+    showToast('✅ Admin mode unlocked');
+    renderTeams(); // re-render so lock overlays disappear
+  } else {
+    document.getElementById('pin-err').textContent = 'Incorrect PIN. Try again.';
+    document.getElementById('pin-input').value = '';
+    document.getElementById('pin-input').focus();
+  }
+}
+function showAdminBar() {
+  // Show admin bar in teams tab if not already there
+  const teamsTab = document.getElementById('tab-teams');
+  if (teamsTab && !document.getElementById('admin-bar')) {
+    const bar = document.createElement('div');
+    bar.id = 'admin-bar';
+    bar.className = 'admin-bar';
+    bar.innerHTML = `
+      <span class="admin-badge">🟢 Admin mode active</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn-ghost" onclick="lockAdmin()">Lock Admin</button>
+      </div>`;
+    teamsTab.insertBefore(bar, teamsTab.querySelector('.info-box'));
+  }
+  // Show past edit card in season
+  const pec = document.getElementById('past-edit-card');
+  if (pec) pec.style.display = 'block';
+  renderPastEditList();
+  // Update admin button
+  const btn = document.getElementById('admin-btn');
+  if (btn) { btn.textContent = '🟢 Admin'; btn.style.borderColor = 'rgba(16,185,129,.4)'; btn.style.color = 'var(--gr)'; }
+}
+function lockAdmin() {
+  adminUnlocked = false;
+  const bar = document.getElementById('admin-bar');
+  if (bar) bar.remove();
+  const pec = document.getElementById('past-edit-card');
+  if (pec) pec.style.display = 'none';
+  const btn = document.getElementById('admin-btn');
+  if (btn) { btn.textContent = '🔐 Admin'; btn.style.borderColor = ''; btn.style.color = ''; }
+  renderTeamsInner();
+  showToast('🔒 Admin mode locked');
+}
+
+// ═══════════════════════════════════════
+//  EDIT PAST MATCHES (admin only)
+// ═══════════════════════════════════════
+let editingMatchId = null;
+let editingSel     = null;
+
+function renderPastEditList() {
+  const el = document.getElementById('past-edit-list');
+  if (!el) return;
+  const matches = Object.entries(seasonData);
+  if (!matches.length) { el.innerHTML = '<div style="color:var(--mu);font-size:12px">No completed matches yet.</div>'; return; }
+  el.innerHTML = matches.map(([mid, m]) => `
+    <div class="past-row">
+      <div>
+        <div class="past-row-name">${m.matchName||mid}</div>
+        <div class="past-row-date">${m.date||''} · ${m.status||''}</div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="openPastModal('${mid}')">✏️ Edit</button>
+    </div>`).join('');
+}
+
+function openPastModal(matchId) {
+  editingMatchId = matchId;
+  const entry = seasonData[matchId];
+  if (!entry) return;
+  // rebuild editingSel from stored results
+  editingSel = NAMES.map((name, pi) => {
+    const r = (entry.results||[]).find(x => x.name === name);
+    if (!r || r.sitout) return { players:[], captain:null, vc:null };
+    return { players: r.players||[], captain: r.captain||null, vc: r.vc||null };
+  });
+  renderPastModalBody(entry);
+  document.getElementById('past-modal').classList.remove('hidden');
+}
+function closePastModal() {
+  document.getElementById('past-modal').classList.add('hidden');
+  editingMatchId = null; editingSel = null;
+}
+
+function renderPastModalBody(entry) {
+  const el = document.getElementById('past-modal-body');
+  // Note: for past-match editing we let admin type player names in text inputs
+  el.innerHTML = `
+    <div style="font-size:12px;color:var(--mu);margin-bottom:12px">
+      <strong style="color:var(--tx)">${entry.matchName||''}</strong> · ${entry.date||''}
+      <br>Enter each participant's 5 player names (comma-separated) and captain/VC.
+    </div>
+    ${NAMES.map((name, pi) => {
+      const s = editingSel[pi];
+      const isSitout = !s.players.length && !s.captain;
+      return `
+      <div style="background:var(--s1);border:1px solid var(--b1);border-radius:8px;padding:12px;margin-bottom:8px">
+        <div style="font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+          <span>${name}</span>
+          <label style="font-size:11px;color:var(--mu);display:flex;align-items:center;gap:5px;cursor:pointer">
+            <input type="checkbox" id="so-${pi}" ${isSitout?'checked':''} onchange="togglePastSitout(${pi})"> Sat out
+          </label>
+        </div>
+        <div id="past-fields-${pi}" ${isSitout?'style="display:none"':''}>
+          <label style="font-size:10px;color:var(--mu)">Players (comma-separated)</label>
+          <input id="past-players-${pi}" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:6px 9px;color:var(--tx);font-size:12px;margin-bottom:5px"
+            value="${s.players.join(', ')}" placeholder="Virat Kohli, Rohit Sharma, ...">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div>
+              <label style="font-size:10px;color:var(--mu)">Captain (C)</label>
+              <input id="past-cap-${pi}" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:6px 9px;color:var(--tx);font-size:12px"
+                value="${s.captain||''}" placeholder="Captain name">
+            </div>
+            <div>
+              <label style="font-size:10px;color:var(--mu)">Vice Captain (VC)</label>
+              <input id="past-vc-${pi}" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:6px 9px;color:var(--tx);font-size:12px"
+                value="${s.vc||''}" placeholder="VC name">
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}`;
+}
+
+function togglePastSitout(pi) {
+  const checked = document.getElementById(`so-${pi}`).checked;
+  document.getElementById(`past-fields-${pi}`).style.display = checked ? 'none' : 'block';
+}
+
+async function recalcPastMatch() {
+  if (!editingMatchId) return;
+  // read from inputs
+  const newSel = NAMES.map((name, pi) => {
+    const isSitout = document.getElementById(`so-${pi}`)?.checked;
+    if (isSitout) return { players:[], captain:null, vc:null, sitout:true };
+    const raw = (document.getElementById(`past-players-${pi}`)?.value||'').split(',').map(s=>s.trim()).filter(Boolean).slice(0,5);
+    const cap = (document.getElementById(`past-cap-${pi}`)?.value||'').trim();
+    const vc  = (document.getElementById(`past-vc-${pi}`)?.value||'').trim();
+    return { players:raw, captain:cap||null, vc:vc||null, sitout:false };
+  });
+
+  // validate
+  for (let pi=0; pi<4; pi++) {
+    const s = newSel[pi]; if (s.sitout) continue;
+    if (s.players.length !== 5) { showToast(`${NAMES[pi]}: need exactly 5 players`); return; }
+    if (!s.captain) { showToast(`${NAMES[pi]}: captain required`); return; }
+    if (!s.vc)      { showToast(`${NAMES[pi]}: VC required`); return; }
+  }
+
+  // fetch scorecard for that match
+  const entry = seasonData[editingMatchId];
+  showToast('Recalculating…');
+  let stats = {}, playerPts = {};
+  try {
+    const raw = await apiGet('match_scorecard', { id: editingMatchId });
+    const innings = raw.scorecard || raw.score || [];
+    innings.forEach(inn => {
+      (inn.batting||[]).forEach(b => {
+        const nm = b.batsman?.name||b.batsmanName; if(!nm)return;
+        if(!stats[nm])stats[nm]=initStats();
+        stats[nm].runs  += parseInt(b.r||0,10);
+        stats[nm].balls += parseInt(b.b||0,10);
+        stats[nm].fours += parseInt(b['4s']||0,10);
+        stats[nm].sixes += parseInt(b['6s']||0,10);
+        stats[nm].batted=true;
+        const d=(b.dismissal||b.outDesc||'').toLowerCase();
+        stats[nm].dismissed=d!==''&&d!=='not out'&&d!=='batting';
+      });
+      (inn.bowling||[]).forEach(bw => {
+        const nm=bw.bowler?.name||bw.bowlerName; if(!nm)return;
+        if(!stats[nm])stats[nm]=initStats();
+        stats[nm].wickets+=parseInt(bw.w||0,10);
+        const ov=parseFloat(bw.o||0);
+        stats[nm].overs+=Math.floor(ov)+Math.round((ov-Math.floor(ov))*10)/6;
+        stats[nm].economy=parseFloat(bw.eco||0);
+        stats[nm].maidens+=parseInt(bw.m||0,10);
+        stats[nm].isBowler=true;
+      });
+    });
+    innings.forEach(inn=>{(inn.batting||[]).forEach(b=>{
+      const d=(b.dismissal||b.outDesc||'').toLowerCase();
+      const bwl=b.bowler?.name||b.bowlerName;
+      if(d.includes('lbw')||/^b\s/.test(d)||d==='bowled'){if(bwl&&stats[bwl])stats[bwl].lbwBowled++;}
+      if(d.includes('caught')){const f=exF(d,'c ');if(f&&stats[f])stats[f].catches++;}
+      if(d.includes('stumped')){const f=exF(d,'st ');if(f&&stats[f])stats[f].stumpings++;}
+      if(d.includes('run out')){const f=exF(d,'run out (');if(f&&stats[f])stats[f].runouts++;}
+    });});
+  } catch(e) { console.warn('Past scorecard:', e.message); }
+
+  // all unique players from selections
+  const allPast = [...new Set(newSel.flatMap(s => s.players))];
+  allPast.forEach(nm => {
+    const s = stats[nm]||initStats();
+    playerPts[nm] = { ...s, pts: dream11Pts(s) };
+  });
+
+  const results = NAMES.map((name, pi) => {
+    const s = newSel[pi];
+    if (s.sitout) return { name, pi, total:0, breakdown:[], sitout:true, captain:null, vc:null, net:0 };
+    let total=0, breakdown=[];
+    s.players.forEach(pname => {
+      const base  = playerPts[pname]?.pts ?? 4;
+      const isCap = s.captain === pname;
+      const isVc  = s.vc      === pname;
+      const mult  = isCap?2:isVc?1.5:1;
+      const final = parseFloat((base*mult).toFixed(1));
+      total+=final;
+      breakdown.push({name:pname,base,isCap,isVc,mult,final,stats:playerPts[pname]});
+    });
+    return {name,pi,total:parseFloat(total.toFixed(1)),breakdown,sitout:false,captain:s.captain,vc:s.vc};
+  });
+  const activeR = results.filter(r=>!r.sitout);
+  results.forEach(r => {
+    if(r.sitout){r.net=0;return;}
+    r.net=parseFloat(activeR.reduce((a,o)=>o.pi===r.pi?a:a+(r.total-o.total),0).toFixed(1));
+  });
+
+  // update seasonData
+  entry.results = results.map(r=>({
+    name:r.name,total:r.total,net:r.net,sitout:r.sitout||false,
+    players:newSel[NAMES.indexOf(r.name)].players,
+    captain:newSel[NAMES.indexOf(r.name)].captain,
+    vc:newSel[NAMES.indexOf(r.name)].vc
+  }));
+  seasonData[editingMatchId] = entry;
+  localStorage.setItem('ipl26_season',JSON.stringify(seasonData));
+  await fb({ season: seasonData });
+  closePastModal();
+  renderSeason();
+  showToast('✅ Past match recalculated & saved');
+}
+
+// BOOT
+loadCfg();
+try{const sd=localStorage.getItem('ipl26_season');if(sd)seasonData=JSON.parse(sd);}catch(e){}
+setInterval(()=>{try{localStorage.setItem('ipl26_season',JSON.stringify(seasonData));}catch(e){}},5000);
+</script>
+</body>
+</html>
